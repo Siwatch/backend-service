@@ -1,25 +1,56 @@
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using service.Data;
+using service.Models;
 using service.Models.DTO;
 
 namespace service.Repository.Impl;
 public class ProductRepo : IProductRepo
 {
-    public Task<ProductDTO> CreateUpdateProduct(ProductDTO productDTO)
+    private readonly ApplicationDbContext _db;
+    private IMapper _mapper;
+    public ProductRepo(ApplicationDbContext db,IMapper mapper)
     {
-        throw new NotImplementedException();
+        _mapper = mapper;
+        _db = db;
+    }
+    
+    public async Task<ProductDTO> CreateUpdateProduct(ProductDTO productDTO)
+    {
+        Product product = _mapper.Map<ProductDTO,Product>(productDTO);
+        if(product.ProductId > 0) {
+            _db.Product.Update(product);
+        }else {
+            _db.Product.Add(product);
+        }
+        await _db.SaveChangesAsync();
+        return _mapper.Map<Product,ProductDTO>(product);
     }
 
-    public Task<bool> DeleteProduct(int id)
+    public async Task<bool> DeleteProduct(int id)
     {
-        throw new NotImplementedException();
+        try{
+            Product product = await _db.Product.FirstOrDefaultAsync(product => product.ProductId == id);
+            if( product == null ) {
+                return false;
+            }
+            _db.Remove(product);
+            await _db.SaveChangesAsync();
+            return true;
+        }catch (Exception ex){
+            return false;
+        }
     }
 
-    public Task<ProductDTO> GetProductById(int id)
+    public async Task<ProductDTO> GetProductById(int id)
     {
-        throw new NotImplementedException();
+        Product productById = await _db.Product.Where(product => product.ProductId == id).FirstOrDefaultAsync();
+        return _mapper.Map<ProductDTO>(productById);
     }
 
-    public Task<IEnumerable<ProductDTO>> GetProducts()
+    public async Task<IEnumerable<ProductDTO>> GetProducts()
     {
-        throw new NotImplementedException();
+        List<Product> productList = await _db.Product.ToListAsync();
+        return _mapper.Map<List<ProductDTO>>(productList);
     }
 }
