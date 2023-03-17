@@ -6,9 +6,9 @@ public class Product
     [Key]
     public int ProductId { get; set; }
     [Required]
-    public double ProductName { get; set; }
+    public string ProductName { get; set; }
     [Range(0, 10000)]
-    public int ProductPrice { get; set; }
+    public double ProductPrice { get; set; }
     public string ProductCategory { get; set; }
     public string ProductDescription { get; set; }
 }

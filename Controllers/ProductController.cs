@@ -48,6 +48,7 @@ public class ProductController : ControllerBase
         return _reponseDTO;
     }
     [HttpDelete]
+    [Route("{id}")]
     public async Task<object> Delete(int id)
     {
         try

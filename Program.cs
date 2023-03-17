@@ -15,7 +15,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // connection string ,config database Postgres
-var connectionString = $"";
+var connHost = "localhost";
+var connPort = "5432";
+var connDB = "ProductDB";
+var connUser = "postgres";
+var connPassword = "password";
+var connectionString = $"Server={connHost}; Port={connPort}; Database={connDB}; UserId={connUser}; Password={connPassword};";
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 // add dependency injection
